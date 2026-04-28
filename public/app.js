@@ -187,23 +187,37 @@ socket.on('bridge-ready', async ({ peerId, peerName, isInitiator }) => {
     // setupWebRTC() will be called there, and showConnectionCard() fires when the data channel opens.
 });
 
-// Auto-join from URL parameter
+// Auto-join from URL parameter — wait for socket to be ready first
 window.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const bridgeCode = urlParams.get('code');
     if (bridgeCode && bridgeCode.length === 6) {
         bridgeCodeInput.value = bridgeCode;
-        setTimeout(() => {
-            btnJoinBridge.click();
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }, 500);
+        // Wait until we have received our own ID (socket is fully ready) before joining
+        const tryJoin = () => {
+            if (myId) {
+                btnJoinBridge.click();
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else {
+                setTimeout(tryJoin, 200);
+            }
+        };
+        setTimeout(tryJoin, 300);
     }
 });
 
 // --- WebRTC Setup ---
 async function setupWebRTC() {
     peerConnection = new RTCPeerConnection({
-        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+        iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' },
+            { urls: 'stun:stun2.l.google.com:19302' },
+            { urls: 'stun:stun3.l.google.com:19302' },
+            { urls: 'stun:stun4.l.google.com:19302' },
+            { urls: 'stun:stun.cloudflare.com:3478' }
+        ],
+        iceCandidatePoolSize: 10
     });
 
     peerConnection.onicecandidate = (event) => {
@@ -264,8 +278,8 @@ function setupDataChannel() {
 async function initiateConnection(peerId, peerName) {
     targetPeerId = peerId;
     targetPeerName = peerName;
-    connTitle.textContent = `Connecting to ${peerName}...`;
-    showConnectionCard();
+    // Show a "Connecting..." state immediately so user knows something is happening
+    showConnecting();
     
     await setupWebRTC();
     
@@ -306,9 +320,18 @@ btnDisconnect.onclick = disconnect;
 
 // --- UI Helpers ---
 function showConnectionCard() {
-    connTitle.textContent = `Connected to Peer (ID: ${targetPeerId})`;
+    connTitle.textContent = `Connected to ${targetPeerName}`;
     connCard.style.display = 'block';
     
+    if (peersCard) peersCard.style.display = 'none';
+    if (bridgeCard) bridgeCard.style.display = 'none';
+}
+
+function showConnecting() {
+    connTitle.textContent = `Connecting to ${targetPeerName}...`;
+    connCard.style.display = 'block';
+    fileSelectSection.style.display = 'none';
+    progressSection.style.display = 'none';
     if (peersCard) peersCard.style.display = 'none';
     if (bridgeCard) bridgeCard.style.display = 'none';
 }
