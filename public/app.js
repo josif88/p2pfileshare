@@ -71,7 +71,13 @@ socket.on('your-id', (data) => {
     myIdEl.textContent = data.id;
 });
 
+// Local peer name lookup
+let knownPeers = {};
+
 socket.on('peer-list', (peers) => {
+    // Store peer names for lookup
+    peers.forEach(p => { knownPeers[p.id] = p.name; });
+
     peersListEl.innerHTML = '';
     const otherPeers = peers.filter(p => p.id !== myId);
 
@@ -102,6 +108,7 @@ socket.on('peer-list', (peers) => {
 socket.on('signal', async ({ sender, signal }) => {
     if (signal.type === 'offer') {
         targetPeerId = sender;
+        targetPeerName = knownPeers[sender] || sender; // look up friendly name
         await setupWebRTC();
         await peerConnection.setRemoteDescription(new RTCSessionDescription(signal));
         const answer = await peerConnection.createAnswer();
@@ -248,6 +255,11 @@ function setupDataChannel() {
         showConnectionCard();
     };
 
+    // Handle race condition: channel may already be open by the time we set onopen
+    if (dataChannel.readyState === 'open') {
+        showConnectionCard();
+    }
+
     dataChannel.onclose = () => {
         disconnect();
     };
@@ -320,9 +332,13 @@ btnDisconnect.onclick = disconnect;
 
 // --- UI Helpers ---
 function showConnectionCard() {
-    connTitle.textContent = `Connected to ${targetPeerName}`;
+    connTitle.textContent = `Connected to ${targetPeerName || targetPeerId}`;
     connCard.style.display = 'block';
-    
+    // Always restore file selection so BOTH sides can send files
+    fileSelectSection.style.display = 'block';
+    progressSection.style.display = 'none';
+    downloadSection.style.display = 'none';
+
     if (peersCard) peersCard.style.display = 'none';
     if (bridgeCard) bridgeCard.style.display = 'none';
 }
