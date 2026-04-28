@@ -10,6 +10,16 @@ const connTitle = document.getElementById('conn-title');
 const btnDisconnect = document.getElementById('btn-disconnect');
 const fileSelectSection = document.getElementById('file-select-section');
 const progressSection = document.getElementById('progress-section');
+const bridgeIdleUi = document.getElementById('bridge-idle-ui');
+const bridgeActiveUi = document.getElementById('bridge-active-ui');
+const btnCreateBridge = document.getElementById('btn-create-bridge');
+const btnJoinBridge = document.getElementById('btn-join-bridge');
+const btnCancelBridge = document.getElementById('btn-cancel-bridge');
+const bridgeCodeInput = document.getElementById('bridge-code-input');
+const bridgeCodeDisplay = document.getElementById('bridge-code-display');
+const bridgeError = document.getElementById('bridge-error');
+const bridgeQrCode = document.getElementById('bridge-qrcode');
+
 const fileInput = document.getElementById('file-input');
 const fileDropArea = document.getElementById('file-drop-area');
 const selectedFilesList = document.getElementById('selected-files-list');
@@ -43,6 +53,8 @@ let speedInterval = null;
 let bytesSentLastTick = 0;
 let bytesReceivedLastTick = 0;
 let lastTickTime = 0;
+
+let resetUiTimeout = null;
 
 // Config
 const CHUNK_SIZE = 64 * 1024; // 64 KB
@@ -100,6 +112,86 @@ socket.on('signal', async ({ sender, signal }) => {
         } catch (e) {
             console.error('Error adding ICE candidate', e);
         }
+    }
+});
+
+// --- WAN Bridge Logic ---
+btnCreateBridge.addEventListener('click', () => {
+    socket.emit('create-bridge');
+});
+
+socket.on('bridge-created', ({ code }) => {
+    bridgeIdleUi.style.display = 'none';
+    bridgeActiveUi.style.display = 'block';
+    bridgeCodeDisplay.textContent = code;
+    
+    bridgeQrCode.innerHTML = '';
+    const bridgeUrl = new URL(window.location.href);
+    bridgeUrl.searchParams.set('code', code);
+    
+    new QRCode(bridgeQrCode, {
+        text: bridgeUrl.href,
+        width: 128,
+        height: 128,
+        colorDark : "#0f172a",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.L
+    });
+});
+
+btnCancelBridge.addEventListener('click', () => {
+    socket.emit('leave-bridge');
+    bridgeActiveUi.style.display = 'none';
+    bridgeIdleUi.style.display = 'block';
+    bridgeError.style.display = 'none';
+    bridgeCodeInput.value = '';
+    window.history.replaceState({}, document.title, window.location.pathname);
+});
+
+btnJoinBridge.addEventListener('click', () => {
+    const code = bridgeCodeInput.value.trim();
+    if (code.length === 6) {
+        bridgeError.style.display = 'none';
+        socket.emit('join-bridge', code);
+    } else {
+        bridgeError.textContent = 'Please enter a valid 6-digit code.';
+        bridgeError.style.display = 'block';
+    }
+});
+
+socket.on('bridge-error', (msg) => {
+    bridgeError.textContent = msg;
+    bridgeError.style.display = 'block';
+});
+
+socket.on('bridge-ready', async ({ peerId, peerName, isInitiator }) => {
+    console.log(`Bridge ready! Connecting to ${peerName} (${peerId})`);
+    
+    bridgeIdleUi.style.display = 'block';
+    bridgeActiveUi.style.display = 'none';
+    bridgeCodeInput.value = '';
+    
+    if (isInitiator) {
+        initiateConnection(peerId, peerName);
+    } else {
+        // Prepare receiver UI
+        targetPeerId = peerId;
+        targetPeerName = peerName;
+        connTitle.textContent = `Connecting to ${peerName}...`;
+        showConnectionCard();
+    }
+});
+
+// Auto-join from URL parameter
+window.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const bridgeCode = urlParams.get('code');
+    if (bridgeCode && bridgeCode.length === 6) {
+        bridgeCodeInput.value = bridgeCode;
+        setTimeout(() => {
+            btnJoinBridge.click();
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }, 500);
     }
 });
 
@@ -208,6 +300,10 @@ function showConnectionCard() {
 }
 
 function showProgressSection(isReceiving = false) {
+    if (resetUiTimeout) {
+        clearTimeout(resetUiTimeout);
+        resetUiTimeout = null;
+    }
     fileSelectSection.style.display = 'none';
     progressSection.style.display = 'block';
     downloadSection.style.display = 'none';
@@ -462,14 +558,18 @@ function finishReceive() {
     downloadLink.download = incomingFileInfo.name;
     downloadSection.style.display = 'block';
     
-    // Keep UI clean, ready for next file
-    setTimeout(() => {
-        transferStatus.textContent = 'Waiting for next file...';
+    // Keep UI clean, ready for next file or sending
+    resetUiTimeout = setTimeout(() => {
+        transferStatus.textContent = 'Sending File...';
         transferStatus.style.color = 'inherit';
         progressBar.style.width = '0%';
         transferAmount.textContent = '0 / 0 MB';
         transferPercentage.textContent = '0%';
         downloadSection.style.display = 'none';
+        
+        // Return to file selection UI so receiver can also send files
+        fileSelectSection.style.display = 'block';
+        progressSection.style.display = 'none';
     }, 5000);
 
     receiveBuffer = [];

@@ -47,6 +47,33 @@
         </div>
     </div>
 
+    <!-- Bridge Card -->
+    <div class="card bridge-card">
+        <h2 class="section-title">Remote Connection</h2>
+        <p style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0;">Not on the same Wi-Fi? Share via a secure 6-digit code.</p>
+        
+        <div id="bridge-idle-ui">
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                <button id="btn-create-bridge" class="btn btn-primary" style="flex: 1;">Generate Code</button>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <input type="text" id="bridge-code-input" placeholder="123456" maxlength="6" style="flex: 1; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); color: var(--text); text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; letter-spacing: 0.25rem;">
+                <button id="btn-join-bridge" class="btn btn-outline">Connect</button>
+            </div>
+            <div id="bridge-error" style="color: var(--danger); font-size: 0.75rem; margin-top: 0.5rem; text-align: center; display: none;"></div>
+        </div>
+
+        <div id="bridge-active-ui" style="display: none; text-align: center;">
+            <p style="margin-bottom: 0.5rem; font-size: 0.875rem;">Your Share Code is:</p>
+            <div id="bridge-code-display" style="font-family: 'JetBrains Mono', monospace; font-size: 3rem; font-weight: 700; color: var(--accent); letter-spacing: 0.5rem; margin-bottom: 1rem;">------</div>
+            <div style="display: flex; justify-content: center;">
+                <div id="bridge-qrcode" style="display: inline-block; background: white; padding: 0.5rem; border-radius: 8px;"></div>
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 1rem; margin-bottom: 1rem;">Waiting for the other device to scan or enter code...</p>
+            <button id="btn-cancel-bridge" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">Cancel</button>
+        </div>
+    </div>
+
     <!-- Active Connection Card (Hidden by default) -->
     <div id="connection-card" class="card" style="display: none;">
         <div class="conn-header">
