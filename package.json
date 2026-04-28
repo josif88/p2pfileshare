@@ -1,0 +1,15 @@
+{
+  "name": "p2p-file-share",
+  "version": "1.0.0",
+  "description": "Zero-Config P2P LAN File Share",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5",
+    "unique-names-generator": "^4.7.1"
+  }
+}
