@@ -20,6 +20,9 @@ const bridgeCodeDisplay = document.getElementById('bridge-code-display');
 const bridgeError = document.getElementById('bridge-error');
 const bridgeQrCode = document.getElementById('bridge-qrcode');
 
+const peersCard = document.getElementById('peers-card');
+const bridgeCard = document.getElementById('bridge-card');
+
 const fileInput = document.getElementById('file-input');
 const fileDropArea = document.getElementById('file-drop-area');
 const selectedFilesList = document.getElementById('selected-files-list');
@@ -279,6 +282,9 @@ function disconnect() {
     targetPeerId = null;
     
     connCard.style.display = 'none';
+    if (peersCard) peersCard.style.display = 'block';
+    if (bridgeCard) bridgeCard.style.display = 'block';
+    
     fileSelectSection.style.display = 'block';
     progressSection.style.display = 'none';
     downloadSection.style.display = 'none';
@@ -297,6 +303,9 @@ btnDisconnect.onclick = disconnect;
 function showConnectionCard() {
     connTitle.textContent = `Connected to Peer (ID: ${targetPeerId})`;
     connCard.style.display = 'block';
+    
+    if (peersCard) peersCard.style.display = 'none';
+    if (bridgeCard) bridgeCard.style.display = 'none';
 }
 
 function showProgressSection(isReceiving = false) {
