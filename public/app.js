@@ -168,21 +168,23 @@ socket.on('bridge-error', (msg) => {
 });
 
 socket.on('bridge-ready', async ({ peerId, peerName, isInitiator }) => {
-    console.log(`Bridge ready! Connecting to ${peerName} (${peerId})`);
+    console.log(`Bridge ready! Connecting to ${peerName} (${peerId}), isInitiator: ${isInitiator}`);
     
+    // Reset bridge UI back to idle
     bridgeIdleUi.style.display = 'block';
     bridgeActiveUi.style.display = 'none';
     bridgeCodeInput.value = '';
     
+    // Store the peer — the connection card will open once the data channel opens
+    targetPeerId = peerId;
+    targetPeerName = peerName;
+    
     if (isInitiator) {
+        // Initiator kicks off the full WebRTC handshake
         initiateConnection(peerId, peerName);
-    } else {
-        // Prepare receiver UI
-        targetPeerId = peerId;
-        targetPeerName = peerName;
-        connTitle.textContent = `Connecting to ${peerName}...`;
-        showConnectionCard();
     }
+    // Non-initiator: just wait for the incoming WebRTC offer via the 'signal' event.
+    // setupWebRTC() will be called there, and showConnectionCard() fires when the data channel opens.
 });
 
 // Auto-join from URL parameter
@@ -216,7 +218,10 @@ async function setupWebRTC() {
     };
 
     peerConnection.onconnectionstatechange = () => {
-        if (peerConnection.connectionState === 'disconnected' || peerConnection.connectionState === 'failed') {
+        const state = peerConnection.connectionState;
+        console.log('Connection state:', state);
+        // Only hard-disconnect on 'failed'. 'disconnected' is transient and can recover.
+        if (state === 'failed') {
             disconnect();
         }
     };

@@ -34,9 +34,19 @@ function getClientIp(socket) {
     return ip;
 }
 
+function isPrivateIp(ip) {
+    if (!ip || ip === 'localhost') return true;
+    return /^10\./.test(ip) ||
+           /^192\.168\./.test(ip) ||
+           /^172\.(1[6-9]|2[0-9]|3[01])\./.test(ip) ||
+           /^127\./.test(ip);
+}
+
 function buildPeerList() {
     const peers = [];
     for (let [id, socket] of io.sockets.sockets) {
+        // Only include LAN (private network) peers in the public list
+        if (!isPrivateIp(socket.clientIp)) continue;
         peers.push({
             id: socket.shortId,
             name: socket.funnyName,
