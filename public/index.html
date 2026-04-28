@@ -23,11 +23,19 @@
 
     <!-- Your Device Card -->
     <div class="card my-device">
-        <h2 class="section-title">Your Device</h2>
-        <div id="my-name" class="my-name">-</div>
-        <div class="device-meta">
-            <span id="my-ip">-</span>
-            <span>ID: <span id="my-id">-</span></span>
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+            <div>
+                <h2 class="section-title">Your Device</h2>
+                <div id="my-name" class="my-name">-</div>
+                <div class="device-meta">
+                    <span id="my-ip">-</span>
+                    <span>ID: <span id="my-id">-</span></span>
+                </div>
+            </div>
+            <div id="qr-container" style="text-align: center; background: white; padding: 0.5rem; border-radius: 8px;">
+                <div id="qrcode" style="display: inline-block;"></div>
+                <p style="margin-top: 0.25rem; margin-bottom: 0; color: #0f172a; font-size: 0.65rem; font-weight: 600;">Scan to Connect</p>
+            </div>
         </div>
     </div>
 
@@ -99,6 +107,7 @@
 
 </div>
 <script src="/socket.io/socket.io.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="app.js"></script>
 <script>
     // Theme toggle
@@ -130,6 +139,18 @@
                 label.textContent = 'Dark';
             }
         }
+    })();
+
+    // QR Code logic
+    (function() {
+        new QRCode(document.getElementById("qrcode"), {
+            text: window.location.href,
+            width: 96,
+            height: 96,
+            colorDark : "#0f172a",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.L
+        });
     })();
 </script>
 </body>
