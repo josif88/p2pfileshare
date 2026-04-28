@@ -1,0 +1,23 @@
+# P2P File Send
+
+P2P File Send is a Zero-Config peer-to-peer (P2P) file sharing web application.
+
+## The Problem
+Emailing large files is clunky, and cloud uploads are too slow. Sending a file from your phone to a Smart TV, interactive board, or a colleague's laptop often requires cables or USB drives.
+
+## The Solution
+This Zero-Config P2P File Share tool allows devices on the same local network (LAN or Wi-Fi) to discover each other automatically. 
+- Fast & Direct: Files are transferred peer-to-peer (P2P) directly between devices via WebRTC. No intermediate servers or cloud storage involved.
+- Secure & Private: Your files never leave your local network.
+- Unlimited Size: Send large files instantly without artificial size restrictions.
+
+## Frequently Asked Questions
+
+**Q: Does this work across different networks?**
+A: Yes! If you are not on the same Wi-Fi, you can use the "Remote Connection" feature to generate a secure 6-digit Share Code. The other device enters this code to establish a direct secure tunnel across the internet.
+
+**Q: Is there a file size limit?**
+A: No. Because files are streamed directly between your devices and are never stored on our servers, there are no artificial file size limits.
+
+**Q: Is my data safe?**
+A: Yes. All file transfers are encrypted end-to-end using standard WebRTC protocols. Your files pass directly from device A to device B.

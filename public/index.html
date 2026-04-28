@@ -5,9 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Zero-config P2P LAN file sharing tool. Fast, secure, and private direct device-to-device file transfer for business, IT, and home networks. Send files between phones, Smart TVs, and PCs instantly without cables.">
     <meta name="keywords" content="P2P file share, LAN file transfer, send files to Smart TV, direct file transfer, local network file share, zero-config file sharing, secure file transfer, business IT tools, transfer large files">
-    <title>P2P LAN File Share - Fast Direct Device Transfer</title>
+    
+    <!-- Open Graph / Social Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://p2pfilesend.com/">
+    <meta property="og:title" content="P2P File Send - Fast Direct Device Transfer">
+    <meta property="og:description" content="Secure, zero-config peer-to-peer file sharing directly between devices on your local network or via secure remote code. No limits, no cloud.">
+    
+    <title>P2P File Send - Fast Direct Device Transfer</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- JSON-LD Structured Data for AI Agents / SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "P2P File Send",
+      "url": "https://p2pfilesend.com/",
+      "description": "Zero-config peer-to-peer file sharing application. Send files securely and directly between devices without using cloud storage.",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
 </head>
 <body>
 <div class="app">
@@ -120,17 +145,30 @@
     </div>
 
     <!-- Info & SEO Section -->
-    <div class="card info-card" style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.6;">
-        <h3 style="color: var(--text); margin-top: 0; font-size: 1rem; font-weight: 600;">About P2P LAN File Share</h3>
+    <article class="card info-card" style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.6;">
+        <h3 style="color: var(--text); margin-top: 0; font-size: 1rem; font-weight: 600;">About P2P File Send</h3>
         <p><strong>The Problem:</strong> Have you ever needed to send a file from your phone to a Smart TV, interactive board, or a colleague's laptop, but didn't have a cable, USB drive, or an easy way to connect them? Emailing large files is clunky, and cloud uploads are too slow.</p>
         <p><strong>The Solution:</strong> This Zero-Config P2P File Share tool solves that instantly. Whether you are an IT professional in a fast-paced business environment, or just sharing family videos at home, this app allows devices on the same local network (LAN or Wi-Fi) to discover each other automatically.</p>
-        <ul style="padding-left: 1.2rem; margin-bottom: 1rem;">
+        <ul style="padding-left: 1.2rem; margin-bottom: 1.5rem;">
             <li><strong>Fast & Direct:</strong> Files are transferred peer-to-peer (P2P) directly between devices via WebRTC. No intermediate servers or cloud storage involved.</li>
             <li><strong>Secure & Private:</strong> Your files never leave your local network.</li>
             <li><strong>Unlimited Size:</strong> Send large files instantly without artificial size restrictions.</li>
         </ul>
+
+        <h4 style="color: var(--text); font-size: 0.95rem; font-weight: 600; margin-bottom: 0.5rem;">Frequently Asked Questions (FAQ)</h4>
+        <div style="margin-bottom: 1rem;">
+            <p style="margin-bottom: 0.25rem;"><strong>Q: Does this work across different networks?</strong></p>
+            <p style="margin-bottom: 0.75rem;">A: Yes! If you are not on the same Wi-Fi, you can use the "Remote Connection" feature to generate a secure 6-digit Share Code. The other device enters this code to establish a direct secure tunnel across the internet.</p>
+            
+            <p style="margin-bottom: 0.25rem;"><strong>Q: Is there a file size limit?</strong></p>
+            <p style="margin-bottom: 0.75rem;">A: No. Because files are streamed directly between your devices and are never stored on our servers, there are no artificial file size limits.</p>
+            
+            <p style="margin-bottom: 0.25rem;"><strong>Q: Is my data safe?</strong></p>
+            <p style="margin-bottom: 0;">A: Yes. All file transfers are encrypted end-to-end using standard WebRTC protocols. Your files pass directly from device A to device B.</p>
+        </div>
+
         <p style="color: var(--accent); font-weight: 500; margin-bottom: 0;">⚠️ Important: Please ensure both devices have this application open in their browser to discover each other and transfer files successfully.</p>
-    </div>
+    </article>
 
 </div>
 <script src="/socket.io/socket.io.js"></script>
